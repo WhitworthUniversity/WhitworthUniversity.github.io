@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+        body {
+            font-family:"'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif";
+        }
+        h1 {
+            text-align: center
+        }
+        p, span {
+            font-size: 48px;
+        }
+        button {
+            font-size: 32px;
+        }
+        img.whack {
+            height: 60px;
+            width: 60px;
+            margin: 10px;
+        }
+    </style>
+
+    <script>
+        var score = 0;
+        var endtime = 0;
+        var timer = null;
+        var buttons = [false,false,false,false,false,false];
+
+        function StartButtonClick() {
+            var btn = document.getElementById('btnStart');
+            btn.disabled = true;
+            score = 0;
+            endtime = Math.floor(new Date().getTime() / 1000) + 30;
+            UpdateUI();
+
+            timer = window.setInterval(TimerFired, 200);
+        }
+
+        function TimerFired() {
+            UpdateUI();
+            CheckMoles();
+            if (GetRemainingTime() <= 0) {
+                clearInterval(timer);
+                var btn = document.getElementById('btnStart');
+                btn.disabled = false;
+                timer = null;
+            }
+        }
+
+        function Whack(i) {
+            if (timer) {
+                if (buttons[i]) {
+                    score = score + 1;
+                    buttons[i] = false;
+                }
+                else
+                    score = score - 1;
+
+                UpdateUI();
+            }
+        }
+
+        function UpdateUI() {
+            var score_label = document.getElementById('score');
+            var timer_label = document.getElementById('timeleft');
+            timer_label.innerHTML = GetRemainingTime();
+            score_label.innerHTML = score;
+            for (var i=0; i<6; i++) {
+                var img = document.getElementById('btn'+i);
+                if (buttons[i])
+                    img.src = 'images/mole.png';
+                else
+                    img.src = 'images/blank.png';
+            }
+        }
+
+        function CheckMoles() {
+            var change = Math.random() < 0.25;
+            if (change) {
+                var mole = Math.floor(Math.random() * 6);
+                buttons[mole] = !buttons[mole];
+            }
+        }
+
+        function GetRemainingTime() {
+            return endtime - Math.floor(new Date().getTime() / 1000);
+        }
+    </script>
+
+    <title>Whack A Mole</title>
+  </head>
+  <body style='height:100%;width:100%;padding: 0;margin: 0'>
+    <h1>Whack A Mole for Camp Metamorphosis</h1>
+    <div style='vertical-align: middle;text-align: center;padding-top: 100px'>
+        <p>Score: <span id='score'>0</span></p>
+        <p>Time: <span id='timeleft'>30</span>s</p>
+
+        <table style='border:0px;margin-left: auto;margin-right: auto;float:none'>
+            <tr>
+                <td><img id='btn0' class='whack' src='images/blank.png' onclick='Whack(0)'></img></td>
+                <td><img id='btn1' class='whack' src='images/blank.png' onclick='Whack(1)'></img></td>
+                <td><img id='btn2' class='whack' src='images/blank.png' onclick='Whack(2)'></img></td>
+            </tr>
+            <tr>
+                <td><img id='btn3' class='whack' src='images/blank.png' onclick='Whack(3)'></img></td>
+                <td><img id='btn4' class='whack' src='images/blank.png' onclick='Whack(4)'></img></td>
+                <td><img id='btn5' class='whack' src='images/blank.png' onclick='Whack(5)'></img></td>
+            </tr>
+        </table>
+        
+        <button id='btnStart' onclick='StartButtonClick()'>Start</button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+        body {
+            font-family:"'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif";
+        }
+        h1 {
+            text-align: center
+        }
+        p, span {
+            font-size: 48px;
+        }
+        td {
+          background-color: white;
+          margin: 2px;
+        }
+        td.winner {
+          background-color: yellow;
+          margin:2px;
+        }
+        img {
+          height: 40px;
+          width: 40px;
+        }
+    </style>
+
+    <script>
+      var xturn=true;
+      var board=[[0,0,0],[0,0,0],[0,0,0]];
+      var gameOver = false;
+
+      function GameButtonClick() {
+        board=[[0,0,0],[0,0,0],[0,0,0]];
+        xturn=true;
+        gameOver = false;
+        for (var r=0; r<3; r++) {
+          for (var c=0; c<3; c++) {
+            document.getElementById('' + r + c).className = '';
+          }
+        }
+        DrawBoard();
+      }
+
+      function TakeTurn(td) {
+        if (gameOver)
+          return;
+
+        var cellid = td.id;
+        var row=parseInt(cellid[0]);
+        var col=parseInt(cellid[1]);
+        if (board[row][col] == 0) {
+          if (xturn) {
+            board[row][col] = 1;
+          }
+          else {
+            board[row][col] = 2;
+          }
+          DrawBoard();
+          xturn = !xturn;
+          CheckWinner();
+        }
+      }
+
+      function DrawBoard() {
+        for (var r=0; r<3; r++) {
+          for (var c=0; c<3; c++) {
+            var img = document.getElementById('i'+r+c);
+            if (board[r][c] == 1) {
+              img.src = 'images/x.png';
+            }
+            else if (board[r][c] == 2) {
+              img.src = 'images/o.png';
+            }
+            else {
+              img.src = 'images/blank.png';
+            }
+          }
+        }
+      }
+
+      function CheckWinner() {
+        if (board[0][0] != 0 && board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+          gameOver = true;
+          document.getElementById('00').className = 'winner';
+          document.getElementById('11').className = 'winner';
+          document.getElementById('22').className = 'winner';
+        }
+        else if (board[0][2] != 0 && board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+          gameOver = true;
+          document.getElementById('02').className = 'winner';
+          document.getElementById('11').className = 'winner';
+          document.getElementById('20').className = 'winner';
+        }
+        else {
+          for (var r=0; r<3; r++) {
+            if (board[r][0] != 0 && board[r][0] == board[r][1] && board[r][1] == board[r][2]) {
+              gameOver = true;
+              document.getElementById('' + r + '0').className = 'winner';
+              document.getElementById('' + r + '1').className = 'winner';
+              document.getElementById('' + r + '2').className = 'winner';
+            }
+          }
+          for (var c=0; c<3; c++) {
+            if (board[0][c] != 0 && board[0][c] == board[1][c] && board[1][c] == board[2][c]) {
+              gameOver = true;
+              document.getElementById('0' + c).className = 'winner';
+              document.getElementById('1' + c).className = 'winner';
+              document.getElementById('2' + c).className = 'winner';
+            }
+          }
+        }
+      }
+    </script>
+
+    <title>Tic-Tac-Toe</title>
+  </head>
+  <body style='height:100%;width:100%;padding: 0;margin: 0'>
+    <h1>Tic-Tac-Toe for Camp Metamorphosis</h1>
+    <div style='vertical-align: middle;text-align: center;padding-top: 100px'>
+      <table style='border:0px;margin-left: auto;margin-right: auto;float:none;background-color: black'>
+        <tr>
+          <td id='00' onclick='TakeTurn(this)'><img id='i00' src='images/blank.png'></td>
+          <td id='01' onclick='TakeTurn(this)'><img id='i01' src='images/blank.png'></td>
+          <td id='02' onclick='TakeTurn(this)'><img id='i02' src='images/blank.png'></td>
+        </tr>
+        <tr>
+          <td id='10' onclick='TakeTurn(this)'><img id='i10' src='images/blank.png'></td>
+          <td id='11' onclick='TakeTurn(this)'><img id='i11' src='images/blank.png'></td>
+          <td id='12' onclick='TakeTurn(this)'><img id='i12' src='images/blank.png'></td>
+        </tr>
+        <tr>
+          <td id='20' onclick='TakeTurn(this)'><img id='i20' src='images/blank.png'></td>
+          <td id='21' onclick='TakeTurn(this)'><img id='i21' src='images/blank.png'></td>
+          <td id='22' onclick='TakeTurn(this)'><img id='i22' src='images/blank.png'></td>
+        </tr>
+      </table>
+      
+      <button id='btn' style='background-color: #00ff00' onclick='GameButtonClick()'>New Game</button>
+    </div>
+  </body>
+</html>

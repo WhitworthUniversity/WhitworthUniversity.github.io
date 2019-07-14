@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+        body {
+            font-family:"'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif";
+        }
+        h1 {
+            text-align: center
+        }
+        p, span {
+            font-size: 48px;
+        }
+        button {
+            font-size: 32px;
+        }
+    </style>
+
+    <script>
+        var score = 0;
+        var buttonon = true;
+
+        function GameButtonClick() {
+            if (buttonon) {
+                score = score+1;
+            }
+            else {
+                score = score-1;
+            }
+            var score_label = document.getElementById('score');
+            score_label.innerHTML = score;
+        }
+
+        function ToggleButton() {
+            var toggle = Math.floor(Math.random() * 2);
+            if (toggle == 1)
+                buttonon = !buttonon;
+
+            var btn = document.getElementById('btn');
+            if (buttonon)
+                btn.style.backgroundColor = '#00ff00';
+            else
+                btn.style.backgroundColor = '#ff0000';
+        }
+    </script>
+
+    <title>Button Press</title>
+  </head>
+  <body style='height:100%;width:100%;padding: 0;margin: 0'>
+    <h1>Button Press for Camp Metamorphosis</h1>
+    <div style='vertical-align: middle;text-align: center;padding-top: 100px'>
+        <p>Score: <span id='score'>0</span></p>
+        <button id='btn' style='background-color: #00ff00' onclick='GameButtonClick()'>Press</button>
+    </div>
+    <script>
+        window.setInterval(ToggleButton, 500);
+    </script>
+  </body>
+</html>
