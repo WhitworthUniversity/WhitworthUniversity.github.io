@@ -1,0 +1,177 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>Slalom Course</title>
+
+    <style>
+        body {
+            font-family:"'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif";
+        }
+        h1 {
+            text-align: center
+        }
+        p, span {
+            font-size: 48px;
+        }
+        button {
+            font-size: 32px;
+        }
+    </style>
+
+	<script type="text/javascript">
+		var width, height;
+		var wratio, hratio;
+		var drawInterval;
+		var ski, skiLeft, skiRight, skiCrash;
+		var flagLeft, flagRight;
+		var tree, trees;
+		var gates = 0;
+		var ingate = 0;
+		var crash = false;
+
+		var skierRect;
+		var skierDelta = 0;
+		var gateWidth;
+		
+		var flagRect;
+		var yDelta;
+
+
+		function init() {
+			var m = document.getElementById('main');
+			c = document.getElementById("slopes");
+			c.width = m.clientWidth*0.9;
+			c.height = m.clientHeight*0.6;
+			wratio = c.clientWidth/600.0;
+			hratio = c.clientHeight/700.0;
+
+			skierRect = {x: (c.clientWidth/2) - 20*wratio, y: 20*hratio, w: 40*wratio, h: 40*wratio};
+			skierDelta = 0;
+			gateWidth = 125*wratio;
+			
+			flagRect = {x: -1, y: -1, w: 40*wratio, h: 40*wratio};
+			yDelta = 2*hratio;
+
+			ctx = c.getContext("2d");
+			ctx.imageSmoothingEnabled = true;
+
+			skiCrash = new Image();
+			skiCrash.src = 'images/crash.png';
+			skiCrash.onload = function() { ski = skiCrash; draw(); }
+			
+			skiLeft = new Image();
+			skiLeft.src = 'images/skierLeft.png';
+			skiLeft.onload = function() { ski = skiLeft; draw(); }
+			
+			skiRight = new Image();
+			skiRight.src = 'images/skierRight.png';
+			skiRight.onload = function() { ski = skiRight; draw(); }
+			
+			flagLeft = new Image();
+			flagLeft.src = 'images/flag.png';
+			flagLeft.onload = function() { draw(); }
+			
+			flagRight = new Image();
+			flagRight.src = 'images/flag.png';
+			flagRight.onload = function() { draw(); }
+			
+			tree = new Image();
+			tree.src = 'images/tree.png';
+			trees = Array();
+			for (i=0; i<4; i++) {
+				trees[i] = {x: Math.floor(Math.random() * (c.clientWidth-50)) + 50, y: Math.floor(Math.random() * 100) + (i+1) * 100, w: 40*wratio, h: 40*wratio};
+			}
+		}
+
+		function draw() {
+			var c = document.getElementById("slopes");
+			var ctx = c.getContext("2d");
+			ctx.clearRect(0,0,c.clientWidth,c.clientHeight);
+
+			skierRect.x += skierDelta;
+			if (skierRect.x < 5)
+				skierRect.x = 5;
+			else if (skierRect.x + skierRect.w + 5 > c.clientWidth)
+				skierRect.x = c.clientWidth - skierRect.w - 5;
+			ctx.drawImage(ski, skierRect.x, skierRect.y, skierRect.w, skierRect.h);
+			
+			if (flagRect.y < 0) {
+				flagRect.y = c.clientHeight;
+				flagRect.x = Math.floor(Math.random() * (c.clientWidth-100)) + 50;
+			}
+			ctx.drawImage(flagLeft, flagRect.x, flagRect.y, flagRect.w, flagRect.h);
+			ctx.drawImage(flagRight, flagRect.x+gateWidth, flagRect.y, flagRect.w, flagRect.h);
+			
+			flagRect.y = flagRect.y - yDelta;
+			for (i=0; i<trees.length; i++) {
+				trees[i].y = trees[i].y - yDelta;
+				if (trees[i].y < 0)
+					trees[i] = {x: Math.floor(Math.random() * (c.clientWidth-50)) + 50, y: c.clientHeight, w: 40*wratio, h: 40*wratio};
+				ctx.drawImage(tree, trees[i].x, trees[i].y, trees[i].w, trees[i].h);
+				
+				if (((trees[i].x > skierRect.x && trees[i].x < skierRect.x + skierRect.w) || (trees[i].x+trees[i].w > skierRect.x+skierRect.w && trees[i].x+trees[i].w < skierRect.x+skierRect.w)) && trees[i].y > skierRect.y && trees[i].y < skierRect.y+skierRect.h) {
+					crash = true;
+					ski = skiCrash;
+				}
+			}
+			
+			if (crash) {
+				if (yDelta >= 0.05)
+					yDelta = yDelta - 0.025;
+				else
+					yDelta = 0;
+			}
+			else {
+				if (flagRect.y > skierRect.y && flagRect.y < skierRect.y+skierRect.h && flagRect.x < skierRect.x && flagRect.x + gateWidth > skierRect.x+skierRect.w)
+					ingate = ingate + 1;
+				else if (flagRect.y <= 50 && yDelta > 0) {
+					if (ingate >= Math.floor(70 / yDelta)) {
+						gates = gates + 1;
+						yDelta = 2 + (gates / 2);
+					}
+					ingate = 0;
+				}
+			}
+			
+			var score = document.getElementById("score");
+			score.innerHTML = gates;
+		}
+
+		function left() {
+			if (crash)
+				return;
+			ski = skiLeft;
+			skierDelta = -4*wratio;
+		}
+
+		function right() {
+			if (crash)
+				return;
+			ski = skiRight;
+			skierDelta = 4*wratio;
+		}
+
+		function up() {
+			skierDelta = 0;
+		}
+	</script>
+</head>
+
+<body>
+	<div id="main" style="width:90%;height:90%">
+		<p>Score: <span id="score">0</span></p>
+		<canvas id="slopes" style="border:1px solid #000000;"></canvas>
+		<div style='text-align: center;padding-top:60px;margin-left: auto;margin-right: auto;float:none;'>
+			<img style='padding:10px;height:30px' src='images/left_arrow.png' onmousedown="left()" onmouseup="up()">
+			<img style='padding:10px;height:30px' src='images/right_arrow.png' onmousedown="right()" onmouseup="up()">
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		init();
+		drawInterval = setInterval(function() { draw(); }, 30);
+	</script>
+</body>
+</html>
