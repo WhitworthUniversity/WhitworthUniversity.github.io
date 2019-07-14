@@ -24,7 +24,7 @@
 		var width, height;
 		var wratio, hratio;
 		var drawInterval;
-		var ski, skiLeft, skiRight, skiCrash;
+		var ski, skiLeft, skier, skiRight, skiCrash;
 		var flagLeft, flagRight;
 		var tree, trees;
 		var gates = 0;
@@ -60,6 +60,10 @@
 			skiCrash = new Image();
 			skiCrash.src = 'images/crash.png';
 			skiCrash.onload = function() { ski = skiCrash; draw(); }
+			
+			skier = new Image();
+			skier.src = 'images/skier.png';
+			skier.onload = function() { ski = skier; draw(); }
 			
 			skiLeft = new Image();
 			skiLeft.src = 'images/skierLeft.png';
@@ -154,6 +158,9 @@
 		}
 
 		function up() {
+			if (crash)
+				return;
+			ski = skier
 			skierDelta = 0;
 		}
 	</script>
@@ -164,8 +171,9 @@
 		<p>Score: <span id="score">0</span></p>
 		<canvas id="slopes" style="border:1px solid #000000;"></canvas>
 		<div style='text-align: center;padding-top:60px;margin-left: auto;margin-right: auto;float:none;'>
-			<img style='padding:10px;height:30px' src='images/left_arrow.png' onmousedown="left()" onmouseup="up()">
-			<img style='padding:10px;height:30px' src='images/right_arrow.png' onmousedown="right()" onmouseup="up()">
+			<img style='padding:10px;height:30px' src='images/left_arrow.png' onclick="left()">
+			<img style='padding:10px;height:30px' src='images/stop.png' onclick="up()">
+			<img style='padding:10px;height:30px' src='images/right_arrow.png' onclick="right()">
 		</div>
 	</div>
 
