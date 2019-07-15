@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+        body {
+            font-family:"'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif";
+        }
+        h1 {
+            text-align: center
+        }
+        p, span {
+            font-size: 48px;
+        }
+
+        td {
+          font-size: 32px;
+          color: white;
+          background-color: white;
+          width: 60px;
+          height: 60px;
+        }
+        td.lit {
+          opacity: 1.0;
+        }
+        td.dim {
+          opacity: 0.60;
+        }
+    </style>
+
+    <script>
+      var ids = ['top', 'left', 'right', 'bottom'];
+      var sequence = [];
+      var usertap = 0;
+      var score = 0;
+
+      function TakeTurn() {
+        ShowSequence();
+      }
+
+      function ShowSequence() {
+        sequence.push(ids[Math.floor(Math.random()*4)]);
+
+        Light(0);
+      }
+
+      function Light(i) {
+        var td = document.getElementById(sequence[i]);
+        td.className = 'lit';
+        setTimeout(() => Dim(i), 1000);
+      }
+
+      function Dim(i) {
+        var td = document.getElementById(sequence[i]);
+        td.className = 'dim';
+        i=i+1;
+        if (i < sequence.length)
+          setTimeout(() => Light(i), 250);
+      }
+
+      function UserTurn(i) {
+        document.getElementById(ids[i]).className = 'lit';
+        setTimeout(() => {
+          document.getElementById(ids[i]).className = 'dim';
+          if (sequence[usertap] != ids[i]) {
+            alert('wrong choice')
+            document.getElementById('gamestart').disabled = false;
+          }
+          else {
+            usertap = usertap+1;
+            if (usertap == sequence.length) {
+              score = score + 1;
+              usertap = 0;
+              document.getElementById('score').innerHTML = score;
+              TakeTurn();
+            }
+          }
+        }, 250);
+      }
+
+      function Start() {
+        this.disabled = true;
+        sequence = [];
+        usertap = 0;
+        score = 0;
+        document.getElementById('score').innerHTML = score;
+
+        TakeTurn();
+      }
+    </script>
+
+    <title>Simon Says</title>
+  </head>
+  <body style='height:100%;width:100%;padding: 0;margin: 0'>
+    <h1>Simon Says for Camp Metamorphosis</h1>
+    <div style='vertical-align: middle;text-align: center;padding-top: 100px'>
+      <p>Score: <span id='score'>0</span></p>
+      <div style='vertical-align: middle;text-align: center;padding-top: 100px'>
+        <table style='border:0px;margin-left: auto;margin-right: auto;float:none;background-color: black'>
+          <tr>
+            <td></td>
+            <td id='top' class='dim' style='background-color: red' onclick='UserTurn(0)'></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td id='left' class='dim' style='background-color: green' onclick='UserTurn(1)'></td>
+            <td><button id='gamestart' onclick='Start(this)'>start</button></td>
+            <td id='right' class='dim' style='background-color: blue' onclick='UserTurn(2)'></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td id='bottom' class='dim' style='background-color: yellow' onclick='UserTurn(3)'></td>
+            <td></td>
+          </tr>
+        </table>
+            
+      </div>
+    </div>
+  </body>
+</html>
